@@ -9,18 +9,36 @@ import requests
 load_dotenv()
 
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
+SITE_TO_MONITOR = "https://www.splunk.com"
 
-def send_test_alert():
-	message = {
-		"text": "*Test Alert*: Slack integration is working!" 
-	}
-	try: 
+def send_slack_alert(site, status, detail=""):
+	if status == "UP":
+		message = {
+			"text": f"`{site}` is *UP* and responsive." 
+		}
+	else: 
+		message = {
+			"text": f"*ALERT*: `{site}` is *DOWN*! {detail}"
+		}
+	try:	
 		response = requests.post(SLACK_WEBHOOK_URL, json=message)
-		if response.status_code == 200:
-			print("Slack test alert sent successfully.")
-		else:
-			print(f"Slack test alert failed: {response.status_code}, {response.text}")
+		if response.status_code != 200:
+			print(f"Slack alert failed: {response.status_code}, {response.text}")
 	except Exception as e:
 		print(f"Error sending Slack alert: {e}")
 
-send_test_alert()
+def check_website(site):
+	try: 
+		response = requests.get(site, timeout=5)
+		if response.status_code == 200:
+			print(f"{site} is up.")
+			send_slack_alert(site, "UP")
+		else: 
+			print(f"{site} returned status code {response.status_code}")
+			send_slack_alert(site, "DOWN", f"Status code: {response.status_code}")
+	except requests.RequestException as e:
+		print(f"Error checking {site}: {e}")
+		send_slack_alert(site, "DOWN", str(e))
+
+check_website(SITE_TO_MONITOR)
+
