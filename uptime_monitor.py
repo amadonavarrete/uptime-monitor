@@ -2,4 +2,4 @@
 # Logs results with timestamps.
 # Send an alert via Slack if a service goes down.
 
-# TEST
+from dotenv import load_dotenv
