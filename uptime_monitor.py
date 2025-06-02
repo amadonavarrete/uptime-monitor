@@ -9,7 +9,13 @@ import requests
 load_dotenv()
 
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
-SITE_TO_MONITOR = "https://www.splunk.com"
+SITE_TO_MONITOR = [
+	"https://splunk.com",
+	"https://github.com",
+	"https://httpstat.us/200",
+	"https://httpstat.us/403",
+	"https://httpstat.us/500",
+]
 
 def send_slack_alert(site, status, detail=""):
 	if status == "UP":
@@ -40,5 +46,6 @@ def check_website(site):
 		print(f"Error checking {site}: {e}")
 		send_slack_alert(site, "DOWN", str(e))
 
-check_website(SITE_TO_MONITOR)
+for website in SITE_TO_MONITOR:
+	check_website(website)
 
