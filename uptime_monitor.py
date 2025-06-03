@@ -1,7 +1,3 @@
-# Develop a monitoring script that checks if one or more services are online.
-# Logs results with timestamps.
-# Send an alert via Slack if a service goes down.
-
 from dotenv import load_dotenv
 from datetime import datetime
 import os
@@ -24,6 +20,12 @@ def get_timestamp():
 		local_timezone = pytz.timezone("America/New_York")
 		return datetime.now(local_timezone).strftime("%Y-%m-%d %H:%M:%S %Z")
 
+def log_alert(site, status, detail=""):
+	timestamp = get_timestamp()
+	log_line = f'timestamp={timestamp} site={site} status={status} reason="{detail}"\n'
+	with open("alerts.log", "a") as logfile:
+		logfile.write(log_line)
+
 def send_slack_alert(site, status, detail=""):
 	timestamp = get_timestamp()
 
@@ -42,12 +44,14 @@ def send_slack_alert(site, status, detail=""):
 	except Exception as e:
 		print(f"Error sending Slack alert: {e}")
 
+	log_alert(site, status, detail)
+
 def check_website(site):
 	try: 
 		response = requests.get(site, timeout=5)
 		if response.status_code == 200:
 			print(f"{site} is up.")
-			send_slack_alert(site, "UP")
+			send_slack_alert(site, "UP", f"Status code: {response.status_code}")
 		else: 
 			print(f"{site} returned status code {response.status_code}")
 			send_slack_alert(site, "DOWN", f"Status code: {response.status_code}")
