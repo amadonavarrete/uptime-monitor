@@ -3,10 +3,12 @@ from datetime import datetime
 import os
 import requests
 import pytz
+import time
 
 
 load_dotenv()
 
+CHECK_INTERVAL = 300
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 SITE_TO_MONITOR = [
 	"https://splunk.com",
@@ -62,6 +64,9 @@ def check_website(site):
 		print(f"Error checking {site}: {e}")
 		send_slack_alert(site, "DOWN", str(e))
 
-for website in SITE_TO_MONITOR:
-	check_website(website)
+if __name__ == '__main__':
+	while True:
+		for website in SITE_TO_MONITOR:
+			check_website(website)
+		time.sleep(CHECK_INTERVAL)
 
