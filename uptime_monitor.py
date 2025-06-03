@@ -11,9 +11,12 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 SITE_TO_MONITOR = [
 	"https://splunk.com",
 	"https://github.com",
+	"https://spacex.com",
 	"https://httpstat.us/200",
 	"https://httpstat.us/403",
 	"https://httpstat.us/500",
+	"https://httpstat.us/random/200,201,403,500-504",
+	"https://httpstat.us/random/200,201,403,500-504"
 ]
 
 def get_timestamp():
