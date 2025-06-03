@@ -3,8 +3,11 @@
 # Send an alert via Slack if a service goes down.
 
 from dotenv import load_dotenv
+from datetime import datetime
 import os
 import requests
+import pytz
+
 
 load_dotenv()
 
@@ -17,14 +20,20 @@ SITE_TO_MONITOR = [
 	"https://httpstat.us/500",
 ]
 
+def get_timestamp():
+		local_timezone = pytz.timezone("America/New_York")
+		return datetime.now(local_timezone).strftime("%Y-%m-%d %H:%M:%S %Z")
+
 def send_slack_alert(site, status, detail=""):
+	timestamp = get_timestamp()
+
 	if status == "UP":
 		message = {
-			"text": f"`{site}` is *UP* and responsive." 
+			"text": f"`{site}` is *UP* and responsive as of `{timestamp}`." 
 		}
 	else: 
 		message = {
-			"text": f"*ALERT*: `{site}` is *DOWN*! {detail}"
+			"text": f"*ALERT*: `{site}` is *DOWN* as of `{timestamp}`! {detail}"
 		}
 	try:	
 		response = requests.post(SLACK_WEBHOOK_URL, json=message)
