@@ -11,6 +11,12 @@ Key capabilities include:
 - **Timestamped Logging** - Logs are written with local timestamps for future analysis or ingestion into tools like Splunk.
 - **Dockerized for Portability** - Easily deployable and repeatable across environments.
   
+Technologies used:
+- **Python**
+- **Docker**
+- **Slack Webhooks**
+- **Splunk**
+
 ---------------------
 
 ## 🔗 Connect with Me
